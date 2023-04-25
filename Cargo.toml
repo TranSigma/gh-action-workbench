@@ -1,0 +1,15 @@
+[package]
+name = "pyrs-build"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "pyrs_build"
+# "rlib" allows the crate to be imported by other crates (tests in this case) instead of just being exported as a C ABI
+# .so. In practice this would two crates, one containing the pure Rust lib and then a second one which exports to PyO3
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+chrono = "0.4.24"
+pyo3 = {version = "0.18.1", features = ["chrono"]}

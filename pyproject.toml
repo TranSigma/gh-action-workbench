@@ -1,0 +1,39 @@
+[build-system]
+requires = ["maturin>=0.14,<0.15"]
+build-backend = "maturin"
+
+[project]
+name = "pyrs-build"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+dependencies = [
+    "tzlocal == 4.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "maturin == 0.14",
+    "pytest >= 7.2",
+    "ruff",
+]
+
+[tool.maturin]
+python-source = "python"
+features = ["pyo3/extension-module"]
+
+
+[tool.pytest.ini_options]
+pythonpath = [
+    ".",
+]
+
+testpaths = "tests/python"
+addopts = [
+    "--import-mode=importlib",
+    "--color=yes",
+]
