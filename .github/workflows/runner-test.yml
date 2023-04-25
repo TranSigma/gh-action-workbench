@@ -5,6 +5,10 @@ on: workflow_dispatch
 jobs:
   test-job:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11']
     steps:
       - uses: actions/checkout@v3
 
@@ -27,6 +31,8 @@ jobs:
         uses: PyO3/maturin-action@v1
         with:
           command: build
-          args: --release
+          args: --release --out=build
+      - name: Install
+        run: pip install build/*.whl
       - name: Run
         run: python -c "import pyrs_build; print(pyrs_build.sys_tz())"
