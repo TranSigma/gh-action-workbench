@@ -1,6 +1,6 @@
 name: Test Runner
 
-on: workflow_dispatch
+on: [workflow_dispatch, pull_request]
 
 jobs:
   test-job:
@@ -27,8 +27,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
-      - name: Create virtual environment
+      - name: Update pip, create virtual environment
         run: |
+          python -m pip install --upgrade pip
           python -m venv .pyenv
           echo "$GITHUB_WORKSPACE/.pyenv/bin" >> $GITHUB_PATH
 
