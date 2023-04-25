@@ -3,7 +3,7 @@ name: Test Runner
 on: workflow_dispatch
 
 jobs:
-  examples:
+  test-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,3 +16,17 @@ jobs:
 
       - name: Run cargo check
         run: cargo check
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: 'pyproject.toml'
+      - name: Build
+        uses: PyO3/maturin-action@v1
+        with:
+          command: build
+          args: --release
+      - name: Run
+        run: python -c "import pyrs_build; print(pyrs_build.sys_tz())"
