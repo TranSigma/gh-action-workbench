@@ -18,21 +18,28 @@ jobs:
       - name: Cache Rust
         uses: Swatinem/rust-cache@v2
 
-      - name: Run cargo check
-        run: cargo check
-
+      - name: Test Rust
+        run: cargo test
+        
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
           cache-dependency-path: 'pyproject.toml'
-      - name: Build
+      - name: Create virtual environment
+        run: |
+          python -m venv .pyenv
+          echo "$GITHUB_WORKSPACE/.pyenv/bin" >> $GITHUB_PATH
+
+      - name: Build Python wheel
         uses: PyO3/maturin-action@v1
         with:
           command: build
           args: --release --out=build
-      - name: Install
+      - name: Install Python wheel
         run: pip install build/*.whl
-      - name: Run
-        run: python -c "import pyrs_build; print(pyrs_build.sys_tz())"
+      - name: Install pytest
+        run: pip install pytest pytest-xdist
+      - name: Test Python
+        run: pytest -n auto
