@@ -1,5 +1,5 @@
 use chrono::offset::FixedOffset;
-use pyrs_build::rs_sys_tz;
+use pyrs::rs_sys_tz;
 
 
 #[test]

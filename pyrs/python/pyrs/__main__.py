@@ -1,4 +1,4 @@
-from pyrs_build import sys_tz, rs_sys_tz
+from pyrs import sys_tz, rs_sys_tz
 
 
 def main():
