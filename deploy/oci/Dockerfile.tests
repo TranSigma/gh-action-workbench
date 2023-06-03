@@ -1,0 +1,7 @@
+# Test Dockerfile
+FROM build
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -U pytest pytest-xdist --root-user-action=ignore
+CMD pytest "/test" -n auto
+# docker run -v /var/run/docker.sock:/var/run/docker.sock --network host
+
