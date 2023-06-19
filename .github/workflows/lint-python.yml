@@ -1,0 +1,41 @@
+on: workflow_call
+
+jobs:
+    lint:
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+      steps:
+        - uses: actions/checkout@v3
+        - uses: pdm-project/setup-pdm@v3
+          name: Setup PDM
+          with:
+            python-version: 3.11
+            architecture: x64
+            prerelease: false
+            enable-pep582: true
+            cache: true
+        - name: Install dependencies
+          run: pdm install -G lint
+        - name: Check ruff
+          run: ruff check . --format=github
+        - name: Check black
+          run: black --check .
+    format:
+      runs-on: ubuntu-latest
+      strategy:
+          fail-fast: false
+      steps:
+          - uses: actions/checkout@v3
+          - uses: pdm-project/setup-pdm@v3
+            name: Setup PDM
+            with:
+              python-version: 3.11
+              architecture: x64
+              prerelease: false
+              enable-pep582: true
+              cache: true
+          - name: Install dependencies
+            run: pdm install -G lint
+          - name: Check black
+            run: black --check .
