@@ -15,12 +15,11 @@ jobs:
             prerelease: false
             enable-pep582: true
             cache: true
+            cache-dependency-path: './pdm-cache.lock'
         - name: Install dependencies
           run: pdm install -G lint
         - name: Check ruff
-          run: ruff check . --format=github
-        - name: Check black
-          run: black --check .
+          run: pdm run -v ruff check . --format=github
     format:
       runs-on: ubuntu-latest
       strategy:
@@ -35,7 +34,8 @@ jobs:
               prerelease: false
               enable-pep582: true
               cache: true
+              cache-dependency-path: './pdm-cache.lock'
           - name: Install dependencies
             run: pdm install -G lint
           - name: Check black
-            run: black --check .
+            run: pdm run -v black --check .
