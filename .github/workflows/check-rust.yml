@@ -12,3 +12,5 @@ on:
 jobs:
   lint-rust:
     uses: ./.github/workflows/lint-rust.yml
+  test-rust:
+    uses: ./.github/workflows/test-rust.yml
