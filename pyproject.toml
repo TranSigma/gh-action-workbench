@@ -1,16 +1,30 @@
 [project]
+name = ""
 dependencies = []
 requires-python = ">=3.11"
 
 [tool.pdm.dev-dependencies]
 dev = [
-    "-e pyrs @ file:///${PROJECT_ROOT}/pyrs",
     "-e dep-pkg @ file:///${PROJECT_ROOT}/dep-pkg",
-    # Pinned to avoid inconsistent lints between devs
-    "ruff==0.0.270",
-    "black",
-    "pytest",
+    "-e pyrs @ file:///${PROJECT_ROOT}/pyrs",
+]
+
+# For use by CI to maintain cache as `Swatinem/rust-cache@v2` does not seem to work for `maturin pep517`
+# Should be same as dev except without PyO3 packages
+build = [
+    "-e dep-pkg @ file:///${PROJECT_ROOT}/dep-pkg",
     "maturin~=1.0",
+]
+
+# Pinned to avoid inconsistent lints between devs
+lint = [
+    "ruff==0.0.270",
+    "black ~= 23.3",
+]
+
+test = [
+    "pytest",
+    "pytest-xdist[psutil] >= 3.2",
 ]
 
 [tool.pytest.ini_options]

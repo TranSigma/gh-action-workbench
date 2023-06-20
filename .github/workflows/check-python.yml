@@ -1,0 +1,16 @@
+name: Check Python
+
+on:
+  pull_request:
+    paths:
+      - pyrs/**
+      - dep-pkg/**
+      - .github/workflows/*-python.yml
+    branches:
+      - master
+
+jobs:
+  lint-python:
+    uses: ./.github/workflows/lint-python.yml
+  test-python:
+    uses: ./.github/workflows/test-python.yml

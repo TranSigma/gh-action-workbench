@@ -1,0 +1,40 @@
+name: Test Python
+
+on: workflow_call
+
+env:
+  PYTHON_VER: 3.11
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+      - name: Rust Version
+        run: rustup show
+
+      - uses: pdm-project/setup-pdm@v3
+        name: Setup PDM
+        with:
+          python-version: ${{ env.PYTHON_VER }}
+          architecture: x64
+          prerelease: false
+          enable-pep582: true
+          cache: true
+          cache-dependency-path: './pdm.lock'
+      - name: Install dependencies
+      # Need the venv to have pip for `maturin develop` to work, but we only want to create it once in order to avoid
+      # invalidating the cache
+        run: |
+          pdm venv list | grep \.venv || pdm venv create --with-pip ${{ env.PYTHON_VER }}
+          pdm sync -v -G build -G test
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+      - name: Build Rust Bindings
+        run: pdm run maturin develop -m pyrs/Cargo.toml
+
+      - name: Test Python
+        run: pdm run -v pytest -n auto
