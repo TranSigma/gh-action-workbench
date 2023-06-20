@@ -178,8 +178,8 @@ dependencies = [
 [metadata]
 lock_version = "4.2"
 cross_platform = true
-groups = ["default", "dev", "lint", "test"]
-content_hash = "sha256:846fe57c731e68bff3133d5d175b6911432ad087f95c1a387a9e625b2f1cc892"
+groups = ["default", "build", "dev", "lint", "test"]
+content_hash = "sha256:d91b172beaa6b99af5a59faa37a701bf4e438d96548a7f974a4e6eda9cabfcb2"
 
 [metadata.files]
 "black 23.3.0" = [
