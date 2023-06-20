@@ -2,6 +2,9 @@ name: Test Python
 
 on: workflow_call
 
+env:
+  PYTHON_VER: 3.11
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,21 +12,29 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Rust
+      - name: Rust Version
         run: rustup show
-      - name: Cache Rust
-        uses: Swatinem/rust-cache@v2
 
       - uses: pdm-project/setup-pdm@v3
         name: Setup PDM
         with:
-          python-version: 3.11
+          python-version: ${{ env.PYTHON_VER }}
           architecture: x64
           prerelease: false
           enable-pep582: true
           cache: true
           cache-dependency-path: './pdm.lock'
       - name: Install dependencies
-        run: pdm sync -v -G dev -G test
+      # Need the venv to have pip for `maturin develop` to work
+        run: |
+          pdm venv create --with-pip ${{ env.PYTHON_VER }}
+          pdm sync -v -G build -G test
+      - name: Build Rust Bindings
+        uses: PyO3/maturin-action@v1
+        with:
+          command: develop
+          sccache: true
+          args: -m **/Cargo.toml
+
       - name: Test Python
         run: pdm run -v pytest -n auto

@@ -11,6 +11,12 @@ dev = [
     "maturin~=1.0",
 ]
 
+# For use by CI to maintain cache as `Swatinem/rust-cache@v2` does not seem to work for `maturin pep517`
+# Should be same as dev except without PyO3 packages
+build = [
+    "-e dep-pkg @ file:///${PROJECT_ROOT}/dep-pkg",
+]
+
 lint = [
     "ruff==0.0.270",
     "black ~= 23.3",
