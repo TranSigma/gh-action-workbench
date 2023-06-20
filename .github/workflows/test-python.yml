@@ -34,7 +34,7 @@ jobs:
         with:
           command: develop
           sccache: true
-          args: -m **/Cargo.toml
+          args: -m pyrs/Cargo.toml
 
       - name: Test Python
         run: pdm run -v pytest -n auto
