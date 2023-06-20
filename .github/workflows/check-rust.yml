@@ -10,5 +10,5 @@ on:
       - master
 
 jobs:
-  lint-python:
+  lint-rust:
     uses: ./.github/workflows/lint-rust.yml
