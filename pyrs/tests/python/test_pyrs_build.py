@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 
 
 def test_sys_tz():
-    assert sys_tz() == ZoneInfo('Etc/UTC')
+    assert sys_tz() == ZoneInfo("Etc/UTC")
 
 
 def test_rs_sys_tz():
