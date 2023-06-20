@@ -30,12 +30,11 @@ jobs:
         run: |
           pdm venv list | grep \.venv || pdm venv create --with-pip ${{ env.PYTHON_VER }}
           pdm sync -v -G build -G test
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - name: Build Rust Bindings
-        uses: PyO3/maturin-action@v1
-        with:
-          command: develop
-          sccache: true
-          args: -m pyrs/Cargo.toml
+        run: pdm run maturin develop -m pyrs/Cargo.toml
 
       - name: Test Python
         run: pdm run -v pytest -n auto
