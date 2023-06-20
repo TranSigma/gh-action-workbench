@@ -17,6 +17,8 @@ jobs:
           # By default actions/checkout checks out a merge commit. Check out the PR head instead.
           # https://github.com/actions/checkout#checkout-pull-request-head-commit-instead-of-merge-commit
           ref: ${{ github.event.pull_request.head.sha }}
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
@@ -37,7 +39,7 @@ jobs:
     needs: build-test-artifacts
     strategy:
       matrix:
-        partition: [1, 2]
+        partition: [1, 2, 3, 4]
     steps:
       # The source directory must be checked out.
       - uses: actions/checkout@v2
@@ -56,4 +58,4 @@ jobs:
       - name: Run tests
         run: |
           ~/.cargo/bin/cargo-nextest nextest run --archive-file nextest-archive.tar.zst \
-            --partition count:${{ matrix.partition }}/2
+            --partition count:${{ matrix.partition }}/4
