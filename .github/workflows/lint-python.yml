@@ -1,5 +1,5 @@
 name: Lint Python
-on: [workflow_call, workflow_dispatch, push]
+on: [workflow_call, workflow_dispatch, push, pull_request]
 
 jobs:
     lint:
@@ -18,7 +18,7 @@ jobs:
             cache: true
             cache-dependency-path: './pdm-cache.lock'
         - name: Install dependencies
-          run: pdm sync -G lint
+          run: pdm sync -G lint -L pdm-cache.lock
         - name: Check ruff
           run: pdm run -v ruff check . --format=github
     format:
@@ -37,6 +37,6 @@ jobs:
               cache: true
               cache-dependency-path: './pdm-cache.lock'
           - name: Install dependencies
-            run: pdm sync -G lint
+            run: pdm sync -G lint -L pdm-cache.lock
           - name: Check black
             run: pdm run -v black --check .
