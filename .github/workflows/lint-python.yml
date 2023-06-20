@@ -19,6 +19,7 @@ jobs:
           cache-dependency-path: './pdm.lock'
       - name: Install dependencies
         run: pdm sync -v -G lint
+
       - name: Check ruff
         run: pdm run -v ruff check . --format=github
   format:
@@ -38,5 +39,6 @@ jobs:
           cache-dependency-path: './pdm.lock'
       - name: Install dependencies
         run: pdm sync -v -G lint
+
       - name: Check black
         run: pdm run -v black --check .

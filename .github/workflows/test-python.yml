@@ -3,12 +3,17 @@ name: Test Python
 on: workflow_call
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Rust
+        run: rustup show
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+
       - uses: pdm-project/setup-pdm@v3
         name: Setup PDM
         with:
