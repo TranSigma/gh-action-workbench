@@ -18,6 +18,7 @@ lint = [
 
 test = [
     "pytest",
+    "pytest-xdist[psutil] >= 3.2",
 ]
 
 [tool.pytest.ini_options]

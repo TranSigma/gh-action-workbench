@@ -12,3 +12,5 @@ on:
 jobs:
   lint-python:
     uses: ./.github/workflows/lint-python.yml
+  test-python:
+    uses: ./.github/workflows/test-python.yml
