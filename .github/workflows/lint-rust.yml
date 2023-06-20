@@ -1,0 +1,38 @@
+name: Lint Rust
+
+on: workflow_dispatch
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache Rust
+      uses: Swatinem/rust-cache@v2
+    - run: rustup component add clippy
+    - name: Check clippy
+      uses: actions-rs/clippy-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  format:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache Rust
+      uses: Swatinem/rust-cache@v2
+    - name: Install stable
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        components: rustfmt
+    - name: Check rustfmt
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: --check
