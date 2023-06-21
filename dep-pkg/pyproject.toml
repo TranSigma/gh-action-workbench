@@ -1,0 +1,15 @@
+[project]
+name = "dep-pkg"
+version = "0.1.0"
+description = "Some local dependency."
+authors = [
+    {name = "John Smith", email = "jsmith@example.com"},
+]
+dependencies = [
+    "structlog>=23.1.0",
+]
+requires-python = ">=3.11"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
