@@ -1,0 +1,25 @@
+name: Autocommit
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+# Dependabot doesn't support PDM lock files https://github.com/pdm-project/pdm/issues/978
+# As such, we want to amend the commit
+  autocommit-something:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+    - name: Update file
+      run: echo "This is a file" > some-file.txt
+    - name: Commit file
+      uses: EndBug/add-and-commit@v9
+      with:
+        #message: 'Automatic commit created on PR'
+        #default_author: user_info
+        add: 'some-file.txt'
+        commit: '--amend --no-edit'
+        push: 'origin ${{ github.head_ref }} --force'
