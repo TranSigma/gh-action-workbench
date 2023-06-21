@@ -1,0 +1,94 @@
+[project]
+dependencies = []
+requires-python = ">=3.11"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "-e pyrs @ file:///${PROJECT_ROOT}/pyrs",
+    "-e dep-pkg @ file:///${PROJECT_ROOT}/dep-pkg",
+    # Pinned to avoid inconsistent lints between devs
+    "ruff==0.0.270",
+    "black",
+    "pytest",
+    "maturin~=1.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+    ".",
+]
+testpaths = "**/tests"
+addopts = [
+    "--import-mode=importlib",
+    "--color=yes",
+]
+markers = [
+  "slow: Tests, typically unit tests, which take longer than average.",
+]
+
+[tool.ruff]
+select = [
+    "E",
+    "F",
+    "A",
+    "RUF",
+    "PLE",
+    "PLC",
+    "PLW",
+    "ANN",
+    "B",
+    "UP",
+    "C4",
+    "C90",
+    "G",
+    "ISC",
+    "INP",
+    "PIE",
+    "T10",
+    "T20",
+    "SIM",
+    "DTZ",
+]
+line-length = 120
+# E722: bare-excepts are fine for tarpit logs when used with `exc_info=True` without the explicit `Exception`
+# UP007: `Optional[{type}]` is preferred over `None | {type}`
+# ANN002: A better use case than kwargs, but ignored at present due to a lack of desire to fix existing cases
+# ANN003: kwargs are often highly dynamically typed dicts so this is more of a hassle
+# ANN101/ANN102: Type checkers are good at figuring self and cls out, this is just line noise
+# C408: dict() calls are somewhat useful for constructing a kwarg in a way that has better visual clarity
+# SIM108: Tenaries are often less readable than simple if-else blocks
+ignore = [
+    "E722",
+    "UP007",
+    "ANN002",
+    "ANN003",
+    "ANN101",
+    "ANN102",
+    "C408",
+    "SIM108",
+]
+
+[tool.ruff.flake8-annotations]
+suppress-none-returning = true
+mypy-init-return = true
+
+[tool.ruff.per-file-ignores]
+"**/tests/**" = [
+    "INP001",
+]
+"**/__init__.py" = [
+    "F403",
+    "F405",
+    "PLE0605",
+]
+
+[tool.black]
+line-length = "120"
+
+[tool.isort]
+profile = "black"
+line_length = "120"
+# https://github.com/python/typeshed
+extra_standard_library = [
+    "_typeshed",
+]
