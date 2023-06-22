@@ -1,0 +1,16 @@
+name: Check Rust
+
+on:
+  pull_request:
+    paths:
+      - pyrs/src/**
+      - pyrs/lyrs/**
+      - .github/workflows/*-rust.yml
+    branches:
+      - master
+
+jobs:
+  lint-rust:
+    uses: ./.github/workflows/lint-rust.yml
+  test-rust:
+    uses: ./.github/workflows/test-rust.yml

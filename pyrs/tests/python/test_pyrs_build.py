@@ -1,15 +1,17 @@
-from pyrs import sys_tz, rs_sys_tz
-import dep_pkg
-from datetime import timezone
+import datetime
 from zoneinfo import ZoneInfo
+
+import dep_pkg
+
+from pyrs import rs_sys_tz, sys_tz
 
 
 def test_sys_tz():
-    assert sys_tz() == ZoneInfo('Etc/UTC')
+    assert sys_tz() == ZoneInfo("Etc/UTC")
 
 
 def test_rs_sys_tz():
-    assert rs_sys_tz() == timezone.utc
+    assert rs_sys_tz() == datetime.UTC
 
 
 def test_other_pkg():

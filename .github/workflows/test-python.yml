@@ -1,0 +1,36 @@
+name: Test Python
+
+on: workflow_call
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      RUST_BACKTRACE: "1"
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: "sccache"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Rust Version
+        run: rustup show
+
+      - name: Sccache Setup
+        uses: mozilla-actions/sccache-action@v0.0.3
+        with:
+          version: "v0.5.3"
+
+      - uses: pdm-project/setup-pdm@v3
+        name: Setup PDM
+        with:
+          python-version: 3.11
+          architecture: x64
+          prerelease: false
+          enable-pep582: true
+          cache: true
+          cache-dependency-path: './pdm.lock'
+      - name: Install dependencies
+        run: pdm sync -v -G dev -G test
+      - name: Test Python
+        run: pdm run -v pytest -n auto

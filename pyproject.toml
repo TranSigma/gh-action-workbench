@@ -1,4 +1,5 @@
 [project]
+name = ""
 dependencies = []
 requires-python = ">=3.11"
 
@@ -7,10 +8,17 @@ dev = [
     "-e pyrs @ file:///${PROJECT_ROOT}/pyrs",
     "-e dep-pkg @ file:///${PROJECT_ROOT}/dep-pkg",
     # Pinned to avoid inconsistent lints between devs
-    "ruff==0.0.270",
-    "black",
-    "pytest",
     "maturin~=1.0",
+]
+
+lint = [
+    "ruff==0.0.270",
+    "black ~= 23.3",
+]
+
+test = [
+    "pytest",
+    "pytest-xdist[psutil] >= 3.2",
 ]
 
 [tool.pytest.ini_options]

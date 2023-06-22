@@ -1,0 +1,33 @@
+name: Lint Rust
+on: workflow_call
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache Rust
+      uses: Swatinem/rust-cache@v2
+    - run: rustup component add clippy
+
+    - name: Check clippy
+      uses: actions-rs/clippy-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  format:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install nightly
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: nightly
+        components: rustfmt
+
+    - name: Check rustfmt
+      run: cargo fmt --all -- --check

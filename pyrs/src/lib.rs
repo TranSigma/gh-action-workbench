@@ -1,5 +1,5 @@
+use chrono::offset::{FixedOffset, Local};
 use pyo3::prelude::*;
-use chrono::offset::{Local, FixedOffset};
 
 /// Formats the sum of two numbers as string.
 #[pyfunction]
