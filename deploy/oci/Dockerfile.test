@@ -1,2 +1,4 @@
 FROM scratch
-CMD echo "Hello World"
+COPY README.md .
+RUN echo "Layer ran"
+CMD ls -lh
