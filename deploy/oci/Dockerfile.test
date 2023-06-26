@@ -1,0 +1,3 @@
+FROM debian:stable-slim
+RUN echo "Layer ran"
+CMD ls -lh

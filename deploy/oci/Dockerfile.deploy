@@ -1,0 +1,14 @@
+# Base/build Dockerfile
+# Final image
+FROM hivo-build as build
+FROM python:3.11-slim-bullseye
+RUN useradd -s /bin/bash engie
+WORKDIR /app
+COPY --from=build /app .
+ENV PATH="/app/venv/bin:$PATH"
+RUN chmod 705 -R .
+RUN chown engie . db
+
+USER engie
+CMD python -m engie
+

@@ -1,0 +1,17 @@
+FROM python:3.11-slim-bullseye as build
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -U pip --root-user-action=ignore
+RUN python -m venv /app/venv
+ENV PATH="/app/venv/bin:$PATH"
+
+COPY build /build
+RUN pip install /build/*.whl
+
+FROM python:3.11-slim-bullseye
+COPY --from=build /app /app
+ENV PATH="/app/venv/bin:$PATH"
+
+RUN useradd -s /bin/bash pyrs
+USER pyrs
+WORKDIR /app
+CMD python -c "import pyrs_build; print(pyrs_build.sys_tz())"
