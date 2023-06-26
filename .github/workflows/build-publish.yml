@@ -25,4 +25,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: "transigma/test-build: ${{ steps.previoustag.outputs.tag }}"
+          tags: "transigma/test-build:${{ steps.previoustag.outputs.tag }}"
