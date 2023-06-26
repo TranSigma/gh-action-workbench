@@ -1,5 +1,12 @@
 name: Release Prepopulated hivo_db Container
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - deploy/oci/Dockerfile.test
+      - .github/workflows/build-publish.yml
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
   release-test-image:
@@ -11,7 +18,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/pkilcommons/test-build
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-build
           tags: |
             type=ref,event=branch
             type=ref,event=pr
