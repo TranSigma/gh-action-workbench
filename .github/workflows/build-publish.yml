@@ -1,0 +1,21 @@
+name: Release Prepopulated hivo_db Container
+on: pull_request
+
+jobs:
+  release-prepop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # TODO
+      - name: Build Image
+        uses: actions/checkout@v3
+      # TODO
+      - name: Publish Image to GHCR
+        uses: actions/checkout@v3
