@@ -2,10 +2,16 @@ name: Release Prepopulated hivo_db Container
 on: pull_request
 
 jobs:
-  release-prepop:
+  release-test-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Required to find tag
+      - name: Get Previous Tag
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
@@ -14,8 +20,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # TODO
-      - name: Build Image
-        uses: actions/checkout@v3
-      # TODO
-      - name: Publish Image to GHCR
-        uses: actions/checkout@v3
+      - name: Build and Publish Image to GHCR
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: "transigma/test-build: ${{ steps.previoustag.outputs.tag }}"
