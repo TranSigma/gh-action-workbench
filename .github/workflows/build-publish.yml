@@ -32,7 +32,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # TODO
       - name: Build and Publish Image to GHCR
         uses: docker/build-push-action@v3
         with:
@@ -40,3 +39,5 @@ jobs:
           file: deploy/oci/Dockerfile.test
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
