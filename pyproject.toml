@@ -10,6 +10,7 @@ dev = [
     "ruff==0.0.270",
     "black",
     "pytest",
+    "pytest-xdist[psutil]",
     "maturin~=1.0",
 ]
 

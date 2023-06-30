@@ -1,0 +1,71 @@
+name: Python Dependencies CI
+on:
+  pull_request:
+    paths:
+      - **/pyproject.toml
+      - .github/workflows/ci-python-deps.yml
+    branches:
+      - master
+      - dev/**
+
+jobs:
+  # Dependabot doesn't support PDM lock files https://github.com/pdm-project/pdm/issues/978. As such, we want to add an
+  # additional commit to the Dependabot PR to update the lock file if any `pyproject.toml` changes as it may have
+  # modified the dependencies.
+  # Do note that the automatic commit will not trigger CI, nor do we need it to as it is just modifying the lock file
+  # which won't affect how the CI runs.
+  update-lock:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+
+    - name: Setup PDM
+      uses: pdm-project/setup-pdm@v3
+      with:
+        python-version: 3.11
+        architecture: x64
+        prerelease: false
+        enable-pep582: true
+        cache: true
+        cache-dependency-path: './pdm.lock'
+
+    - name: Update pdm.lock
+      run: pdm lock
+
+    - name: Commit pdm.lock
+      uses: EndBug/add-and-commit@v9
+      with:
+        pathspec_error_handling: exitImmediately
+        add: 'pdm.lock'
+        message: 'Update pdm.lock'
+        default_author: user_info
+
+  root-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          paths: '["pyproject.toml"]'
+
+  lint-python:
+    # Lints are only defined in the root `pyproject.toml` so we don't need to run lints if it doesn't change
+    needs: root-check
+    if: needs.root-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/lint-python.yml
+    with:
+      python-version: 3.11
+
+  test-python:
+    uses: ./.github/workflows/test-python.yml
+    with:
+      python-version: 3.11
+      # We test everything as a dependency may change in Package A which Package B depends on so we want to make sure
+      # Package B is still passing tests. Alternatively, the root `pyproject.toml` may have updated pytest itself and
+      # we want to make sure nothing is breaking because of that
+      package: "."

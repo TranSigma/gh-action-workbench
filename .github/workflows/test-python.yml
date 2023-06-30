@@ -1,0 +1,95 @@
+name: Test Python
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      # Which Python package is calling this workflow? This is so we can limit the testing scope
+      # This needs to be a path to the directory which contains the `pyproject.toml`
+      package:
+        required: true
+        type: string
+      needs-oci-image:
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  repeat-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          # NOTE VERIFY VALIDITY OF COMMENT:
+          # This will prevent
+          paths_ignore: '["**/pyproject.toml"]'
+          skip_after_successful_duplicate: 'true'
+          concurrent_skipping: 'same_content_newer'
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    env:
+      RUST_BACKTRACE: "1"
+      SCCACHE_GHA_ENABLED: "true"
+      RUSTC_WRAPPER: "sccache"
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: ${{ inputs.python-version }}
+          architecture: x64
+          prerelease: false
+          enable-pep582: true
+          cache: true
+          cache-dependency-path: './pdm.lock'
+
+      - name: Rust Version
+        run: rustup show
+
+      - name: Sccache Setup
+        uses: mozilla-actions/sccache-action@v0.0.3
+        with:
+          version: "v0.5.3"
+
+      # In the future we probably want to limit to building only the package and its dependencies
+      - name: Install Dependencies
+        run: pdm install -v -G dev
+
+      - name: Get Docker Metadata
+        if: inputs.needs-oci-image == true
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # Name doesn't matter. We're only using this action to get the same tag it would generate in the build-release
+          # workflow
+          images: ${{ env.REGISTRY }}/${{ github.actor }}/foo
+          tags: type=ref,event=pr
+
+      - name: Log in to GHCR
+        if: inputs.needs-oci-image == true
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test Python
+        run: pdm run -p ${{ inputs.package }} -v pytest -n auto ${{ inputs.package }}
+        env:
+          HIVO_CI_OCI_TAG: ${{ steps.meta.outputs.tags }}

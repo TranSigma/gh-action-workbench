@@ -1,0 +1,53 @@
+name: dep-pkg CI
+
+on:
+  pull_request:
+    paths:
+      - dep-pkg/**
+      - .github/workflows/ci-dep-pkg.yml
+    paths-ignore:
+      # Defer to `ci-python-deps.yml`
+      - dep-pkg/pyproject.toml
+    branches:
+      - master
+
+env:
+  package: dep-pkg
+
+jobs:
+  repeat-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          skip_after_successful_duplicate: 'true'
+
+  lint-python:
+    needs: repeat-check
+    if: needs.repeat-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/lint-python.yml
+    with:
+      python-version: 3.11
+
+  test-python:
+    needs: repeat-check
+    if: needs.repeat-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/test-python.yml
+    with:
+      python-version: 3.11
+      package: ${{ github.env.package }}
+
+  lint-rust:
+    needs: repeat-check
+    if: needs.repeat-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/lint-rust.yml
+
+  test-rust:
+    needs: repeat-check
+    if: needs.repeat-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/test-rust.yml
+    with:
+      package: ${{ github.env.package }}
