@@ -6,7 +6,7 @@ authors = [
     {name = "John Smith", email = "jsmith@example.com"},
 ]
 dependencies = [
-    "structlog>=23.1.0",
+    "structlog>=23.0.0",
 ]
 requires-python = ">=3.11"
 
