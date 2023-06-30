@@ -24,25 +24,19 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  superset-check:
+  repeat-check:
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
-      reason: ${{ steps.skip_check.outputs.reason }}
     steps:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          # If a dependency changes, we only want `ci-python-deps.yml`'s tests to execute since it covers everything...
-          paths_ignore: '["**/pyproject.toml"]'
           skip_after_successful_duplicate: 'true'
 
   test:
-    needs: superset-check
-    # ... so we let this job execute if it would only be skipped as a result of the dependency and it would test "."
-    if: |
-      needs.superset-check.outputs.should_skip != 'true' ||
-      (inputs.package == '.' && needs.superset-check.outputs.reason == 'paths_ignore')
+    needs: repeat-check
+    if: needs.repeat-check.outputs.should_skip != 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

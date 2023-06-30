@@ -42,20 +42,7 @@ jobs:
         message: 'Update pdm.lock'
         default_author: user_info
 
-  root-check:
-    runs-on: ubuntu-latest
-    outputs:
-      should_skip: ${{ steps.skip_check.outputs.should_skip }}
-    steps:
-      - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5
-        with:
-          paths: '["pyproject.toml"]'
-
   lint-python:
-    # Lints are only defined in the root `pyproject.toml` so we don't need to run lints if it doesn't change
-    needs: root-check
-    if: needs.root-check.outputs.should_skip != 'true'
     uses: ./.github/workflows/lint-python.yml
     with:
       python-version: 3.11
