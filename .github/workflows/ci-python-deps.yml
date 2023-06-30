@@ -2,7 +2,7 @@ name: Python Dependencies CI
 on:
   pull_request:
     paths:
-      - **/pyproject.toml
+      - "**/pyproject.toml"
       - .github/workflows/ci-python-deps.yml
     branches:
       - master
