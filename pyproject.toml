@@ -7,11 +7,13 @@ dev = [
     "-e pyrs @ file:///${PROJECT_ROOT}/pyrs",
     "-e dep-pkg @ file:///${PROJECT_ROOT}/dep-pkg",
     # Pinned to avoid inconsistent lints between devs
-    "ruff==0.0.270",
-    "black",
     "pytest",
     "pytest-xdist[psutil]",
     "maturin~=1.0",
+]
+lint = [
+    "ruff==0.0.270",
+    "black",
 ]
 
 [tool.pytest.ini_options]
