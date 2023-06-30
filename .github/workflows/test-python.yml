@@ -34,9 +34,8 @@ jobs:
         uses: fkirc/skip-duplicate-actions@v5
         with:
           # If a dependency changes, we only want `ci-python-deps.yml`'s tests to execute since it covers everything...
-          paths: '["**/pyproject.toml"]'
+          paths_ignore: '["**/pyproject.toml"]'
           skip_after_successful_duplicate: 'true'
-          concurrent_skipping: 'same_content_newer'
 
   test:
     needs: superset-check
