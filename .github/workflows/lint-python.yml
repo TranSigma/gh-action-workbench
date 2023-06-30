@@ -1,0 +1,54 @@
+name: Lint Python
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+
+jobs:
+  concurrent-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  lint:
+    needs: concurrent-check
+    if: needs.concurrent-check.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: ${{ inputs.python-version }}
+          architecture: x64
+          prerelease: false
+          enable-pep582: true
+          cache: true
+          cache-dependency-path: './pdm.lock'
+
+      - name: Install dependencies
+        run: pdm install -v -G lint
+
+      - name: Check ruff
+        run: pdm run -v ruff check . --format=github
+
+      # Ensure these checks also fire even if ruff failed
+      - name: Check black
+        if: success() || failure()
+        run: pdm run -v black --check .
+
+      # Dependabot doesn't update the lock file by itself so don't check
+      - name: Check pdm.lock
+        if: (success() || failure()) && github.actor != 'dependabot[bot]'
+        run: pdm lock --check

@@ -1,10 +1,11 @@
-from .pyrs import *
-import dep_pkg
 from zoneinfo import ZoneInfo
+
+import dep_pkg
 import tzlocal
 
+from .pyrs import *
 
-__doc__ = pyrs.__doc__
+__doc__ = pyrs.__doc__  # noqa: A001
 if hasattr(pyrs, "__all__"):
     __all__ = pyrs.__all__
 
