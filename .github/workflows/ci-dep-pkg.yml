@@ -9,7 +9,7 @@ on:
       - master
 
 env:
-  package: dep-pkg
+  package: "dep-pkg"
 
 jobs:
   repeat-check:
