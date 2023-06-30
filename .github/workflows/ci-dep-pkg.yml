@@ -41,8 +41,8 @@ jobs:
       package: ${{ github.env.package }}
 
   lint-rust:
-    needs: repeat-check
-    if: needs.repeat-check.outputs.should_skip != 'true'
+    #needs: repeat-check
+    #if: needs.repeat-check.outputs.should_skip != 'true'
     uses: ./.github/workflows/lint-rust.yml
 
   test-rust:
