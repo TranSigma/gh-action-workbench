@@ -5,5 +5,5 @@ logger = structlog.stdlib.get_logger()
 
 
 def some_func() -> bool:
-    logger.info("I'm a function in dep-pkg.")
+    logger.info("I'm a function in dep-pkg.", file=__name__)
     return True
