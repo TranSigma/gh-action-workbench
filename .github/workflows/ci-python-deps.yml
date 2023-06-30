@@ -6,7 +6,6 @@ on:
       - .github/workflows/ci-python-deps.yml
     branches:
       - master
-      - dev/**
 
 jobs:
   # Dependabot doesn't support PDM lock files https://github.com/pdm-project/pdm/issues/978. As such, we want to add an
