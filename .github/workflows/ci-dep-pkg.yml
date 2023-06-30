@@ -38,15 +38,3 @@ jobs:
     with:
       python-version: 3.11
       package: ${{ github.env.package }}
-
-  lint-rust:
-    #needs: repeat-check
-    #if: needs.repeat-check.outputs.should_skip != 'true'
-    uses: ./.github/workflows/lint-rust.yml
-
-  test-rust:
-    needs: repeat-check
-    if: needs.repeat-check.outputs.should_skip != 'true'
-    uses: ./.github/workflows/test-rust.yml
-    with:
-      package: ${{ github.env.package }}
