@@ -1,0 +1,51 @@
+name: PR Title Conventional Commit
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+    branches:
+      - master
+
+permissions:
+  pull-requests: read
+
+jobs:
+  main:
+    name: Validate PR title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        id: lint_pr_title
+        with:
+          requireScope: false
+          # First letter of subject must be lowercase
+          subjectPattern: ^(?![A-Z]).+$
+          ignoreLabels: bot
+          scopes: |
+            py
+            rust
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: always() && (steps.lint_pr_title.outputs.error_message != null)
+        with:
+          header: pr-title-lint-error
+          message: |
+            This PR's title violated either the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) or is using a type or scope not allowed by this project.
+
+            <details>
+            <summary>Error</summary>
+            ${{ steps.lint_pr_title.outputs.error_message }}
+            </details>
+
+            See #32 for more details.
+
+      # Delete a previous comment when the issue has been resolved
+      - if: ${{ steps.lint_pr_title.outputs.error_message == null }}
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-title-lint-error
+          delete: true
