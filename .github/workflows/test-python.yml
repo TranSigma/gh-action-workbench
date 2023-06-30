@@ -90,6 +90,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test Python
-        run: pdm run -p ${{ inputs.package }} -v pytest -n auto ${{ inputs.package }}
+        run: pdm run -v pytest -n auto ${{ inputs.package }}
         env:
           HIVO_CI_OCI_TAG: ${{ steps.meta.outputs.tags }}

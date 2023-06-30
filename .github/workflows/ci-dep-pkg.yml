@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  repeat-check:
+  dupe-check:
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
@@ -22,15 +22,15 @@ jobs:
           paths: '["dep-pkg/pyproject.toml"]'
 
   lint-python:
-    needs: repeat-check
-    if: needs.repeat-check.outputs.should_skip != 'true'
+    needs: dupe-check
+    if: needs.dupe-check.outputs.should_skip != 'true'
     uses: ./.github/workflows/lint-python.yml
     with:
       python-version: 3.11
 
   test-python:
-    needs: repeat-check
-    if: needs.repeat-check.outputs.should_skip != 'true'
+    needs: dupe-check
+    if: needs.dupe-check.outputs.should_skip != 'true'
     uses: ./.github/workflows/test-python.yml
     with:
       python-version: 3.11
