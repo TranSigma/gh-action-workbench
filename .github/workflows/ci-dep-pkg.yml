@@ -1,0 +1,37 @@
+name: dep-pkg CI
+
+on:
+  pull_request:
+    paths:
+      - dep-pkg/**
+      - .github/workflows/ci-dep-pkg.yml
+    branches:
+      - master
+
+jobs:
+  dupe-check:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          skip_after_successful_duplicate: 'true'
+          # Defer to `ci-python-deps.yml`
+          paths: '["dep-pkg/pyproject.toml"]'
+
+  lint-python:
+    needs: dupe-check
+    if: needs.dupe-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/lint-python.yml
+    with:
+      python-version: 3.11
+
+  test-python:
+    needs: dupe-check
+    if: needs.dupe-check.outputs.should_skip != 'true'
+    uses: ./.github/workflows/test-python.yml
+    with:
+      python-version: 3.11
+      package: "dep-pkg"
