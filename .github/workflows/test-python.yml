@@ -32,8 +32,8 @@ jobs:
       - id: skip_check
         uses: fkirc/skip-duplicate-actions@v5
         with:
-          # NOTE VERIFY VALIDITY OF COMMENT:
-          # This will prevent
+          # This will prevent the package-specific test from firing if the dependency CI (which tests every package) is
+          # triggered at the same time
           paths_ignore: '["**/pyproject.toml"]'
           skip_after_successful_duplicate: 'true'
           concurrent_skipping: 'same_content_newer'

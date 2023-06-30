@@ -5,9 +5,6 @@ on:
     paths:
       - dep-pkg/**
       - .github/workflows/ci-dep-pkg.yml
-    paths-ignore:
-      # Defer to `ci-python-deps.yml`
-      - dep-pkg/pyproject.toml
     branches:
       - master
 
@@ -24,6 +21,8 @@ jobs:
         uses: fkirc/skip-duplicate-actions@v5
         with:
           skip_after_successful_duplicate: 'true'
+          # Defer to `ci-python-deps.yml`
+          paths: '["dep-pkg/pyproject.toml"]'
 
   lint-python:
     needs: repeat-check
