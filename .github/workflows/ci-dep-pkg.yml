@@ -19,7 +19,7 @@ jobs:
         with:
           skip_after_successful_duplicate: 'true'
           # Defer to `ci-python-deps.yml`
-          paths: '["dep-pkg/pyproject.toml"]'
+          paths_ignore: '["dep-pkg/pyproject.toml"]'
 
   lint-python:
     needs: dupe-check
