@@ -2,6 +2,7 @@ on: pull_request
 
 env:
   REGISTRY: ghcr.io
+  DO: true
 
 jobs:
   meta:
@@ -20,6 +21,7 @@ jobs:
           cache-dependency-path: './pdm.lock'
 
       - name: Get Docker Metadata
+        if: env.DO == true
         id: meta
         uses: docker/metadata-action@v4
         with:
