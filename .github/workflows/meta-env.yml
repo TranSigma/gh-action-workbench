@@ -28,7 +28,12 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ github.actor }}/foo
           tags: type=ref,event=pr
 
+      - name: Install Dependencies
+        run: pdm install -v -G dev
+
       - name: Run check
         run: python get_env.py
         env:
           HIVO_CI_OCI_TAG: ${{ steps.meta.outputs.tags }}
+      - name: Run test
+        run: pdm run pytest -n auto test_env.py -rP
